@@ -1,4 +1,4 @@
 
 typedef struct board *Board;
-int createBoard(Board ADT, int size1);
+Board createBoard();
 void display_board(int *, int );
