@@ -7,12 +7,9 @@
 
 int main()
 {
-    Board Board1;
-    int size1=createBoard(Board1,2);
-    char c;
+    Board input_Board = createBoard();
+    display_board(input_Board);
     
-    // int size = sqrt(i);
-    // display_board(number_stream, size);
     return EXIT_SUCCESS;
 }
 
