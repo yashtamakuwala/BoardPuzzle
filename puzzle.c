@@ -8,6 +8,7 @@
 int main()
 {
     Board input_Board = createBoard();
+    // printf("\nElements : %d\n", input_Board->no_of_elements);
     display_board(input_Board);
     
     return EXIT_SUCCESS;

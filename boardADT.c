@@ -7,30 +7,34 @@
 #include <ctype.h>
 
 #define BLANK 0
+#define VALID_BOARD 1
+#define ERR_INVALID_SIZE -1
+#define ERR_DUPLICATE_TILE -2
+#define ERR_MISSING_TILES -3
+// struct board{
+//     int *p;
+//     int size; //number of elements = size * size
+//     int no_of_elements;
+// };
 
-struct board{
-    int *p;
-    int size; //number of elements = size * size
-    int no_of_elements;
-};
 
 
-bool is_board_valid(int *p, int no_of_elements){
-
-    return true;
-}
 
 void display_board(Board board){
-    for (int no_of_elements = 0; no_of_elements < board->no_of_elements; no_of_elements ++) {
-        if (no_of_elements % board->size == 0){
-            printf("\n");
-        }
-        // printf("%d", *(board + no_of_elements));
+
+    printf("\nDisplaying board");
+    printf("\nElements : %d\n", board->no_of_elements);
+
+    for (int no_of_elements = 0; no_of_elements < board->no_of_elements; no_of_elements++) {
+        // if (no_of_elements % board->size == 0){
+        //     printf("\n");
+        // }
+        printf("%d", *(board->p + no_of_elements + 1));
     }
 }
 
-bool valid_size(Board board, int no_of_elements){
-    double size = sqrt(no_of_elements);
+bool valid_size(Board board){
+    double size = sqrt(board->no_of_elements);
     int isize = size;
     
     if (isize == size){
@@ -39,6 +43,16 @@ bool valid_size(Board board, int no_of_elements){
     } else {
         return false;
     }
+}
+
+int is_board_valid(Board board){
+
+    if(!valid_size(board)){
+        return ERR_INVALID_SIZE;
+    } // else if(duplicateTileExists(board)){
+
+    // }
+    return VALID_BOARD;
 }
 
 int disorderOfBoard(Board board){
@@ -98,6 +112,7 @@ bool areAllTilesPresent(Board board){
 
 Board createBoard(){
     Board board;
+    board = malloc(sizeof(struct board));
     int *number_stream = malloc(sizeof(int));
     char c;
     int no_of_elements = 0;
@@ -106,18 +121,21 @@ Board createBoard(){
     if(number_stream != NULL) {
         int num = 0;
         while(true){
+            
             c = getchar();
+            
             // c = s[no_of_elements];
-            printf("\nCharacter: %c", c);
+            // printf("\nCharacter: %c", c);
 
-            if(c == ' ' || c == '\t' || c == '\n'){ //TODO: add EOF handling
+            if(c == ' ' || c == '\t' || c == '\n' || c == EOF){ //TODO: add EOF handling
                 if(num>0){
-                    printf("\ninside num %d", num);
-                    no_of_elements += 1;
+                    // printf("\ninside num %d", num);
+                    
                     *(number_stream+no_of_elements) = num;
                     number_stream = realloc(number_stream, (no_of_elements) * sizeof(int));
                     
                     printf("\nnumber_Stream %d", *(number_stream+no_of_elements));
+                    no_of_elements += 1;
                     num = 0;
 
                     if(c == '\n'){
@@ -129,21 +147,26 @@ Board createBoard(){
                     if(c == '\n'){
                         break;
                     }
-
                     continue;
                 }
 
             }
 
+            if(c == 'b'){
+                no_of_elements += 1;
+                *(number_stream+no_of_elements) = BLANK;
+                number_stream = realloc(number_stream, (no_of_elements) * sizeof(int));
 
+                continue;
+            }
 
             num = num * 10 + (c-'0');
-            // printf("\nnum multi %d\n\n", num);
         }
-    printf("\nFinished parsing");
-        
+    
     board->p = number_stream;
     board->no_of_elements = no_of_elements;
+
+    free(number_stream);
     return board;
     } else{
         fprintf(stderr,"Insufficient Memory");
