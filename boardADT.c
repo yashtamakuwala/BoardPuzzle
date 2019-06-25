@@ -4,6 +4,7 @@
 #include <stdbool.h> 
 #include "boardADT.h"
 #include <math.h>
+#include <ctype.h>
 
 #define BLANK 0
 
@@ -19,12 +20,12 @@ bool is_board_valid(int *p, int no_of_elements){
     return true;
 }
 
-void display_board(int *board, int size){
-    for (int no_of_elements = 0; no_of_elements < size; no_of_elements ++) {
-        if (no_of_elements % size == 0){
+void display_board(Board board){
+    for (int no_of_elements = 0; no_of_elements < board->no_of_elements; no_of_elements ++) {
+        if (no_of_elements % board->size == 0){
             printf("\n");
         }
-        printf("%d", *(board + no_of_elements));
+        // printf("%d", *(board + no_of_elements));
     }
 }
 
@@ -100,34 +101,53 @@ Board createBoard(){
     int *number_stream = malloc(sizeof(int));
     char c;
     int no_of_elements = 0;
+    char s[20] = "1 2 3 b\n";
 
     if(number_stream != NULL) {
         int num = 0;
         while(true){
             c = getchar();
-            
+            // c = s[no_of_elements];
+            printf("\nCharacter: %c", c);
+
             if(c == ' ' || c == '\t' || c == '\n'){ //TODO: add EOF handling
                 if(num>0){
+                    printf("\ninside num %d", num);
                     no_of_elements += 1;
-                    *number_stream = num;
-                    number_stream = realloc(number_stream, no_of_elements * sizeof(int));
+                    *(number_stream+no_of_elements) = num;
+                    number_stream = realloc(number_stream, (no_of_elements) * sizeof(int));
+                    
+                    printf("\nnumber_Stream %d", *(number_stream+no_of_elements));
+                    num = 0;
 
-                    printf("%d", *(number_stream+no_of_elements));
+                    if(c == '\n'){
+                        break;
+                    }
+                    continue;
                 } else {
+
+                    if(c == '\n'){
+                        break;
+                    }
+
                     continue;
                 }
 
-                
             }
 
-            num = num * 10 + (c-'0');
-        }
 
+
+            num = num * 10 + (c-'0');
+            // printf("\nnum multi %d\n\n", num);
+        }
+    printf("\nFinished parsing");
+        
     board->p = number_stream;
     board->no_of_elements = no_of_elements;
     return board;
     } else{
-        //show insufficient meomery error
+        fprintf(stderr,"Insufficient Memory");
+        return board;
     }
     
     
