@@ -136,7 +136,7 @@ Board initialise_board(){
     return board;
 }
 
-// TODO: Handle 0
+// TODO: Handle 0 and other invalid characters like - #^%#@#$@gregwyw
 // TODO: Free the board p
 Board createBoard(){
     Board board ; // = initialise_board();
