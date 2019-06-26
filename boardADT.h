@@ -10,3 +10,4 @@ struct board{
 void display_board(Board);
 int is_board_valid(Board);
 Board createBoard();
+bool solvable(Board, Board);

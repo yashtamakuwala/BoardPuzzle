@@ -25,9 +25,7 @@ void display_board(Board board){
     printf("\nElements : %d\n", board->no_of_elements);
 
     for (int no_of_elements = 1; no_of_elements <= board->no_of_elements; no_of_elements++) {
-        // if (no_of_elements % board->size == 0){
-        //     printf("\n");
-        // }
+        printf("here %d %d\n", no_of_elements, board->size);
         printf("%d ", *(board->p + no_of_elements));
     }
 }
@@ -48,7 +46,6 @@ bool valid_size(Board board){
         return false;
     }
 }
-
 
 
 int disorderOfBoard(Board board){
@@ -139,78 +136,86 @@ Board initialise_board(){
     return board;
 }
 
+// TODO: Handle 0
+// TODO: Free the board p
 Board createBoard(){
     Board board ; // = initialise_board();
+    int *number_stream = NULL;
+    char c;
+    int no_of_elements = 0;
+    bool b_found = false;
+    int num;
+
     board = malloc(sizeof(struct board));
     board->no_of_elements = 0;
     board->size = 0;
 
-    int *number_stream = malloc(sizeof(int));
-    char c;
-    int no_of_elements = 0;
     // char s[20] = "1 2 3 b\n";
-    bool b_found = false;
+    while(true){
+        num = 0;
+        c = getchar();
+        printf("\nCharacter: %c %d",c,c);
+        if(c == ' ' || c == '\t' || c == '\n' || c == EOF){
+            printf("\nInside whitespace");
+            if(num>0){
+                printf("\ninner num :%d", num);
+                no_of_elements += 1;
+                
+                number_stream = realloc(number_stream, (no_of_elements) * sizeof(int));
+                *(number_stream+no_of_elements) = num;
+                printf("\nNumber_Stream %d", *(number_stream+no_of_elements));
+                
+                num = 0;
 
-    if(number_stream != NULL) {
-        int num = 0;
-        while(true){
-            
-            c = getchar();
-
-            if(c == ' ' || c == '\t' || c == '\n' || c == EOF){ 
-                if(num>0){
-                    no_of_elements += 1;
-                    *(number_stream+no_of_elements) = num;
-                    number_stream = realloc(number_stream, (no_of_elements) * sizeof(int));
-                    
-                    // printf("\nNumber_Stream %d", *(number_stream+no_of_elements));
-                    
-                    num = 0;
-
-                    if(c == '\n'){
-                        break;
-                    }
-                    continue;
-                } else {
-
-                    if(c == '\n'){
-                        break;
-                    }
-                    continue;
-                }
-            }
-
-            if(c == 'b' ){
-                if (!b_found) {
-                    no_of_elements += 1;
-                    *(number_stream+no_of_elements) = BLANK;
-                    number_stream = realloc(number_stream, (no_of_elements) * sizeof(int));
-                    printf("\nNumber_Stream %d", *(number_stream+no_of_elements));
-                    b_found = true;
-                    continue;
-                } else {
+                if(c == '\n'){
+                    printf("\n num>0 Terminal");
                     break;
                 }
-            }
+                continue;
+            } else {
 
-            num = num * 10 + (c-'0');
+                if(c == '\n'){
+                    printf("\nTerminal");
+                    break;
+                }
+                continue;
+            }
         }
+
+        if(c == 'b' ){
+            if (!b_found) {
+                no_of_elements += 1;
+                
+                number_stream = realloc(number_stream, (no_of_elements) * sizeof(int));
+                *(number_stream+no_of_elements) = BLANK;
+                printf("\nNumber_Stream %d", *(number_stream+no_of_elements));
+                b_found = true;
+                continue;
+            } else {    //Have found duplicate 'b'
+                break;
+            }
+        }
+
+        num = num * 10 + (c-'0');
+        printf("\nCalculated num: %d\n\n", num);
+    }
     
+    //Return empty board if 'b' is absent from input
+    if(!b_found){
+        return board;
+    }
+
     board->p = number_stream;
     board->no_of_elements = no_of_elements;
 
     free(number_stream);
     return board;
-    } else{
-        fprintf(stderr,"Insufficient Memory");
-        return board;
-    }
 }
 
 bool solvable(Board input_board, Board goal_board){
 
     if(input_board->size != goal_board->size){
-        return false;
+        return false; //TODO return 'INVALID'
     }
 
     int input_parity = getParity(disorderOfBoard(input_board));
