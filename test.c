@@ -72,13 +72,12 @@
 // }
 
 void main(){
-   char c = '5';
-   int num = c - '0';
-   // snprintf(c, "%d", num );
-   printf("a : %d", num);
+   char c = 'b';
+   // int num = c - '0';
+   // // snprintf(c, "%d", num );
+   // printf("a : %d", num);
 
-   bool a = 4 % 2;
-   if(a){
-   printf("\n%d", a);
+   if( c > 'a' && c < 'z' ){
+      printf("\nless");
    }
 }

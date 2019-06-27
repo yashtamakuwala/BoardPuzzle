@@ -13,19 +13,13 @@
 #define ERR_MISSING_TILES -3
 #define ERR_INVALID_TILE -4
 
-// struct board{
-//     int *p;
-//     int size; //number of elements = size * size
-//     int no_of_elements;
-// };
-
 void display_board(Board board){
 
     printf("\nDisplaying board");
     printf("\nElements : %d\n", board->no_of_elements);
 
     for (int no_of_elements = 1; no_of_elements <= board->no_of_elements; no_of_elements++) {
-        printf("here %d %d\n", no_of_elements, board->size);
+        // printf("here %d %d\n", no_of_elements, board->size);
         printf("%d ", *(board->p + no_of_elements));
     }
 }
@@ -144,27 +138,28 @@ Board createBoard(){
     char c;
     int no_of_elements = 0;
     bool b_found = false;
-    int num;
+    int num = 0;
 
     board = malloc(sizeof(struct board));
     board->no_of_elements = 0;
     board->size = 0;
+    board->error = 1;
 
-    // char s[20] = "1 2 3 b\n";
     while(true){
-        num = 0;
+        
         c = getchar();
-        printf("\nCharacter: %c %d",c,c);
+        // printf("\nCharacter: %c %d",c,c);
         if(c == ' ' || c == '\t' || c == '\n' || c == EOF){
-            printf("\nInside whitespace");
+            // printf("\nInside whitespace");
+            
             if(num>0){
-                printf("\ninner num :%d", num);
+                // printf("\ninner num :%d", num);
                 no_of_elements += 1;
                 
                 number_stream = realloc(number_stream, (no_of_elements) * sizeof(int));
                 *(number_stream+no_of_elements) = num;
                 printf("\nNumber_Stream %d", *(number_stream+no_of_elements));
-                
+                printf("\nNo_of_elements: %d", no_of_elements);
                 num = 0;
 
                 if(c == '\n'){
@@ -173,9 +168,9 @@ Board createBoard(){
                 }
                 continue;
             } else {
-
+                
+                //Trailing whitespaces and then input parsing finished
                 if(c == '\n'){
-                    printf("\nTerminal");
                     break;
                 }
                 continue;
@@ -189,11 +184,18 @@ Board createBoard(){
                 number_stream = realloc(number_stream, (no_of_elements) * sizeof(int));
                 *(number_stream+no_of_elements) = BLANK;
                 printf("\nNumber_Stream %d", *(number_stream+no_of_elements));
+                printf("\nNo_of_elements: %d", no_of_elements);
                 b_found = true;
                 continue;
             } else {    //Have found duplicate 'b'
+                board->error = ERR_DUPLICATE_TILE;
                 break;
             }
+        }
+
+        if(!isdigit(c) || c == 0){
+            board->error = ERR_INVALID_TILE;
+            break;
         }
 
         num = num * 10 + (c-'0');
@@ -202,6 +204,7 @@ Board createBoard(){
     
     //Return empty board if 'b' is absent from input
     if(!b_found){
+        board->error = ERR_MISSING_TILES;
         return board;
     }
 
@@ -222,4 +225,11 @@ bool solvable(Board input_board, Board goal_board){
     int goal_parity = getParity(disorderOfBoard(goal_board));
     
     return input_parity == goal_parity;
+}
+
+void free_pointers(Board board){
+
+    printf("\nFreeing pointers");
+    free(board->p);
+    free(board);
 }

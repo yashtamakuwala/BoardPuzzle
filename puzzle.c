@@ -16,16 +16,24 @@ void printValidationMsg(int code);
 int main()
 {
     Board input_Board = createBoard();
-    printf("\nElements : %d\n", input_Board->no_of_elements);
-    display_board(input_Board);
-    
-    int validity = is_board_valid(input_Board);
+    int validity = input_Board->error;
+
+    if(validity<0){
+        printValidationMsg(validity);
+        free_pointers(input_Board);
+        return EXIT_FAILURE;
+    }
+       
+    validity = is_board_valid(input_Board);
     printf("\nInput validity :%d\n", validity);
 
     if(validity<0){
         printValidationMsg(validity);
+        free(input_Board);
         return EXIT_FAILURE;
     }
+    
+    display_board(input_Board);
 
     // Board goal_Board = createBoard();
     // display_board(goal_Board);
