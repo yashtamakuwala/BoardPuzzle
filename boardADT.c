@@ -13,14 +13,14 @@
 #define ERR_DUPLICATE_TILE -2
 #define ERR_MISSING_TILES -3
 #define ERR_INVALID_TILE -4
+#define ERR_INSUFFICIENT_MEMORY -5
 
 void display_board(Board board){
 
-    printf("\nDisplaying board");
-    printf("\nElements : %d\n", board->no_of_elements);
+    // printf("\nDisplaying board");
+    // printf("\nElements : %d\n", board->no_of_elements);
 
     for (int no_of_elements = 1; no_of_elements <= board->no_of_elements; no_of_elements++) {
-        // printf("here %d %d\n", no_of_elements, board->size);
         if(*(board->p + no_of_elements) == BLANK){
             printf("b ");
         } else {
@@ -84,7 +84,7 @@ int disorderOfBoard(Board board){
         }
     }
 
-    printf("\nDisorder: %d", disorder);
+    // printf("\nDisorder: %d", disorder);
     return disorder;
 }
 
@@ -188,6 +188,12 @@ Board createBoard(){
                 if (no_of_elements >= size * size){
                     size += 1;
                     number_stream = realloc(number_stream, (size*size) * sizeof(int));
+
+                    if (number_stream == NULL) {
+                        board->error = ERR_INSUFFICIENT_MEMORY;
+                        return board;
+                    }
+
                 }
                 
                 *(number_stream+no_of_elements) = num;
@@ -239,8 +245,6 @@ Board createBoard(){
         // printf("\nCalculated num: %d\n\n", num);
     }
     
-    printf("\n\nFInished parsing");
-
     //Return empty board if 'b' is absent from input
     if(!b_found){
         board->error = ERR_MISSING_TILES;
@@ -264,7 +268,7 @@ bool solvable(Board input_board, Board goal_board){
 
 void free_pointers(Board board){
 
-    printf("\nFreeing pointers\n");
+    // printf("\nFreeing pointers\n");
     free(board->p);
     free(board);
 }
