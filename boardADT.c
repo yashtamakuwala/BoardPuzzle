@@ -250,7 +250,7 @@ Board createBoard(){
     board->p = number_stream;
     board->no_of_elements = no_of_elements;
 
-    free(number_stream);
+    // free(number_stream);
     return board;
 }
 
