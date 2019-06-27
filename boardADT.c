@@ -21,7 +21,11 @@ void display_board(Board board){
 
     for (int no_of_elements = 1; no_of_elements <= board->no_of_elements; no_of_elements++) {
         // printf("here %d %d\n", no_of_elements, board->size);
-        printf("%d ", *(board->p + no_of_elements));
+        if(*(board->p + no_of_elements) == BLANK){
+            printf("b ");
+        } else {
+            printf("%d ", *(board->p + no_of_elements));
+        }
     }
 }
 
