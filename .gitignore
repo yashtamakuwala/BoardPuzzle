@@ -1,0 +1,6 @@
+*.json
+*.plist
+*.out
+*.dysm
+*.bin
+*.ipch
