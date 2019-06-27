@@ -7,6 +7,7 @@
 #include <ctype.h>
 
 #define BLANK 0
+#define MIN_BOARD_SIZE 1
 #define VALID_BOARD 1
 #define ERR_INVALID_SIZE -1
 #define ERR_DUPLICATE_TILE -2
@@ -41,17 +42,35 @@ bool valid_size(Board board){
     }
 }
 
+int disorderOfBlank(int blank_number, int board_size ){
+    int disord = 0;
+    int quo = blank_number/board_size;
+    int rem = blank_number % board_size;
+
+    if(rem > 0 ){
+        disord = quo + 1;
+    } else {
+        disord = quo;
+    }
+
+    return disord;
+}
 
 int disorderOfBoard(Board board){
     int disorder = 0;
     bool is_board_odd = board->size % 2;
+    // printf("\n Board odd? :%d", is_board_odd);
 
     for (int no_of_elements = 1; no_of_elements <= board->no_of_elements; no_of_elements++){
             if ( !is_board_odd && *(board->p+no_of_elements) == BLANK){
-                disorder += no_of_elements/board->size;
+                // printf("\n Board odd? :%d", is_board_odd);
+                // printf("\nBlank: %d", *(board->p+no_of_elements));
+                // printf("\n elements: %d", no_of_elements);
+                // printf("\nDisord blank : %d", no_of_elements/board->size);
+                disorder += disorderOfBlank(no_of_elements, board->size);
                 continue;
             }
-        for(int j = no_of_elements; j <= board->no_of_elements; j++) {
+        for(int j = no_of_elements + 1; j <= board->no_of_elements; j++) {
             if (*(board->p+j) == BLANK){     //skip blank
                 continue;
             }
@@ -61,6 +80,7 @@ int disorderOfBoard(Board board){
         }
     }
 
+    printf("\nDisorder: %d", disorder);
     return disorder;
 }
 
@@ -80,21 +100,23 @@ bool duplicateTileExists(Board board){
     return false;
 }
 
-// bool areAllTilesPresent(Board board){
-//     for (int no_of_elements = 1; no_of_elements <= board->no_of_elements; no_of_elements++) {
-//         for (int j = 1; j <= board->no_of_elements; j++) {
-//             if (*(board->p + j) == no_of_elements) {
-//                 break;
-//             } else if (j < board->no_of_elements){
-//                 continue;
-//             } else {
-//                 return false;
-//             }
-//         }
-//     }
+bool areAllTilesPresent(Board board){
+    int total_elements = board->no_of_elements;
 
-//     return true;
-// }
+    for (int no_of_elements = 1; no_of_elements < total_elements; no_of_elements++) {
+        for (int j = 1; j < total_elements; j++) {
+            if (*(board->p + j) == no_of_elements) {
+                break;
+            } else if (j < total_elements){
+                continue;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
 
 bool allTilesWithinRange(Board board){
     int range_max = board->size * board->size;
@@ -113,10 +135,14 @@ int is_board_valid(Board board){
 
     if(!valid_size(board)){
         return ERR_INVALID_SIZE;
-    }  else if(duplicateTileExists(board)){
+    }  
+    else if(duplicateTileExists(board)){
         return ERR_DUPLICATE_TILE;
     } else if (!allTilesWithinRange(board)) {
         return ERR_INVALID_TILE;
+    } 
+    else if (!areAllTilesPresent(board)){
+        return ERR_MISSING_TILES;
     }
     return VALID_BOARD;
 }
@@ -130,8 +156,6 @@ Board initialise_board(){
     return board;
 }
 
-// TODO: Handle 0 and other invalid characters like - #^%#@#$@gregwyw
-// TODO: Free the board p
 Board createBoard(){
     Board board ; // = initialise_board();
     int *number_stream = NULL;
@@ -139,6 +163,7 @@ Board createBoard(){
     int no_of_elements = 0;
     bool b_found = false;
     int num = 0;
+    int size = MIN_BOARD_SIZE; //2
 
     board = malloc(sizeof(struct board));
     board->no_of_elements = 0;
@@ -156,14 +181,18 @@ Board createBoard(){
                 // printf("\ninner num :%d", num);
                 no_of_elements += 1;
                 
-                number_stream = realloc(number_stream, (no_of_elements) * sizeof(int));
+                if (no_of_elements >= size * size){
+                    size += 1;
+                    number_stream = realloc(number_stream, (size*size) * sizeof(int));
+                }
+                
                 *(number_stream+no_of_elements) = num;
-                printf("\nNumber_Stream %d", *(number_stream+no_of_elements));
-                printf("\nNo_of_elements: %d", no_of_elements);
+                // printf("\nNumber_Stream %d", *(number_stream+no_of_elements));
+                // printf("\nNo_of_elements: %d", no_of_elements);
                 num = 0;
 
                 if(c == '\n'){
-                    printf("\n num>0 Terminal");
+                    // printf("\n num>0 Terminal");
                     break;
                 }
                 continue;
@@ -181,10 +210,14 @@ Board createBoard(){
             if (!b_found) {
                 no_of_elements += 1;
                 
-                number_stream = realloc(number_stream, (no_of_elements) * sizeof(int));
+                if (no_of_elements == size * size){
+                    size += 1;
+                    number_stream = realloc(number_stream, (size*size) * sizeof(int));
+                }
+
                 *(number_stream+no_of_elements) = BLANK;
-                printf("\nNumber_Stream %d", *(number_stream+no_of_elements));
-                printf("\nNo_of_elements: %d", no_of_elements);
+                // printf("\nNumber_Stream %d", *(number_stream+no_of_elements));
+                // printf("\nNo_of_elements: %d", no_of_elements);
                 b_found = true;
                 continue;
             } else {    //Have found duplicate 'b'
@@ -199,9 +232,11 @@ Board createBoard(){
         }
 
         num = num * 10 + (c-'0');
-        printf("\nCalculated num: %d\n\n", num);
+        // printf("\nCalculated num: %d\n\n", num);
     }
     
+    printf("\n\nFInished parsing");
+
     //Return empty board if 'b' is absent from input
     if(!b_found){
         board->error = ERR_MISSING_TILES;
@@ -217,10 +252,6 @@ Board createBoard(){
 
 bool solvable(Board input_board, Board goal_board){
 
-    if(input_board->size != goal_board->size){
-        return false; //TODO return 'INVALID'
-    }
-
     int input_parity = getParity(disorderOfBoard(input_board));
     int goal_parity = getParity(disorderOfBoard(goal_board));
     
@@ -229,7 +260,7 @@ bool solvable(Board input_board, Board goal_board){
 
 void free_pointers(Board board){
 
-    printf("\nFreeing pointers");
+    printf("\nFreeing pointers\n");
     free(board->p);
     free(board);
 }

@@ -16,18 +16,19 @@ void printValidationMsg(int code);
 int main()
 {
     Board input_Board = createBoard();
-    int validity = input_Board->error;
+    int validity = input_Board->error;  //to check for errors while input-parsing
 
     if(validity<0){
+        printf("\nWhile input parsing, Input board has ");
         printValidationMsg(validity);
         free_pointers(input_Board);
         return EXIT_FAILURE;
     }
        
     validity = is_board_valid(input_Board);
-    printf("\nInput validity :%d\n", validity);
 
     if(validity<0){
+        printf("\nInput board has ");
         printValidationMsg(validity);
         free(input_Board);
         return EXIT_FAILURE;
@@ -35,35 +36,57 @@ int main()
     
     display_board(input_Board);
 
-    // Board goal_Board = createBoard();
-    // display_board(goal_Board);
-    // validity = is_board_valid(goal_Board);
+    Board goal_Board = createBoard();
+    validity = goal_Board->error;
+
+    if(validity<0){
+        printf("\nGoal board has ");
+        printValidationMsg(validity);
+        free_pointers(goal_Board);
+        return EXIT_FAILURE;
+    }
+       
+    validity = is_board_valid(goal_Board);
+
+    if(validity<0){
+        printf("\nGoal board has ");
+        printValidationMsg(validity);
+        free(goal_Board);
+        return EXIT_FAILURE;
+    }
+
+    display_board(goal_Board);
+    validity = is_board_valid(goal_Board);
     // printf("\nGoal State validity :%d\n", validity);
 
-    // printf("\nSolvable%d", solvable(input_Board, goal_Board));
+    if(input_Board->size != goal_Board->size){
+        printf("\nInvalid boards");
+    } else {
+        solvable(input_Board, goal_Board) ? printf("\nSolvable") : printf("\nUnsolvable");
+    }
     return EXIT_SUCCESS;
 }
 
 void printValidationMsg(int code){
     switch (code){
         case -1:
-            printf("\nInvalid Board Size");
+            printf("invalid Board Size\n");
             break;
         
         case -2:
-            printf("\nDuplicate Tiles present. Invalid Board.");
+            printf("duplicate Tiles present. Invalid Board.\n");
             break;
 
         case -3:
-            printf("\nOne or more Tiles are missing. Invalid Board");
+            printf("one or more Tiles missing. Invalid Board\n");
             break;
 
         case -4:
-            printf("\nOne or more Tile(s) are invalid. Invalid Board");
+            printf("\none or more Tile(s) invalid. Invalid Board\n");
             break;       
 
         default:
-            printf("\nInvalid Board. Please check input");
+            printf("\nInvalid Board. Please check input\n");
             break;
     }
 }
