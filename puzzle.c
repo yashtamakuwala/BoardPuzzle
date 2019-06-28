@@ -1,11 +1,17 @@
-// Created by:- Yash Umeshkumar Tamakuwala (z5248584)
-// Client that creates input and goal boards, shows errors if any and prints if they are solvable/unsolvable.
-
+/**
+ * @file puzzle.c
+ * @author Yash Umeshkumar Tamakuwala (z5248584)
+ * @brief : Client that creates input and goal boards, shows errors if any and
+ * prints if they are solvable/unsolvable.
+ * @date 2019-06-28
+ * 
+ * @copyright Copyright (c) 2019
+ * 
+ */
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <stdbool.h> 
 #include "boardADT.h"
 #include <math.h>
 
@@ -22,56 +28,61 @@ void validateAndFree(int validity, Board board, int boardType);
 
 int main()
 {
-    Board input_Board = createBoard();
-    int validity = errorInBoard(input_Board);  //to check for errors while input-parsing
-    
+    Board inputBoard = createBoard();
+    int validity = errorInBoard(inputBoard);  //to check for errors while input-parsing
 
     if (validity < 0) {
-        validateAndFree(validity, input_Board, INPUT_BOARD);
+        validateAndFree(validity, inputBoard, INPUT_BOARD);
     }
     
-    validity = is_board_valid(input_Board);
+    validity = isBoardValid(inputBoard);
 
     if (validity < 0) {
-        validateAndFree(validity, input_Board, INPUT_BOARD);
+        validateAndFree(validity, inputBoard, INPUT_BOARD);
     }
 
     printf("\nstart: ");
-    display_board(input_Board);
+    displayBoard(inputBoard);
 
-    Board goal_Board = createBoard();
-    validity = errorInBoard(goal_Board);
+    Board goalBoard = createBoard();
+    validity = errorInBoard(goalBoard);
 
     
     if (validity < 0) {
-        validateAndFree(validity, goal_Board, GOAL_BOARD);
+        validateAndFree(validity, goalBoard, GOAL_BOARD);
     }
        
-    validity = is_board_valid(goal_Board);
+    validity = isBoardValid(goalBoard);
 
     if (validity < 0) {
-        validateAndFree(validity, goal_Board, GOAL_BOARD);
+        validateAndFree(validity, goalBoard, GOAL_BOARD);
     }
 
     printf("\ngoal: ");
-    display_board(goal_Board);
-    validity = is_board_valid(goal_Board);
+    displayBoard(goalBoard);
+    validity = isBoardValid(goalBoard);
 
-    if (sizeCheck(input_Board, goal_Board)) {
+    if (!equalSizesCheck(inputBoard, goalBoard)) {
         printf("\nInvalid boards as their sizes don't match.");
     } else {
-        if (solvable(input_Board, goal_Board)) {
+        if (solvable(inputBoard, goalBoard)) {
             printf("\nsolvable"); 
         } else {
             printf("\nunsolvable");
         }
     }
 
-    free_pointers(input_Board);
-    free_pointers(goal_Board);
+    freePointers(inputBoard);
+    freePointers(goalBoard);
     return EXIT_SUCCESS;
 }
 
+/**
+ * @brief Will print error message for the board based on board type, free pointers and exit program 
+ * @param validity 
+ * @param board 
+ * @param boardType 
+ */
 void validateAndFree(int validity, Board board, int boardType){
 
     printf("\nWhile parsing,");
@@ -81,10 +92,15 @@ void validateAndFree(int validity, Board board, int boardType){
         printf(" goal board has ");
     }
     printValidationMsg(validity);
-    free_pointers(board);
+    freePointers(board);
     exit(0);   
 }
 
+/**
+ * @brief print validation message based on error code
+ * 
+ * @param code 
+ */
 void printValidationMsg(int code) {
     switch (code) {
         case -1:

@@ -1,10 +1,18 @@
-
+/**
+ * @file boardADT.h
+ * @author Yash U Tamakuwala (z5248584)
+ * @brief header file of ADT through which client(puzzle.c) will communicate and use functions
+ * @date 2019-06-28
+ * 
+ * @copyright Copyright (c) 2019
+ * 
+ */
 typedef struct board *Board;
 
-void display_board(Board);
-int is_board_valid(Board);
+void displayBoard(Board);
+int isBoardValid(Board);
 Board createBoard();
 int solvable(Board, Board);
-void free_pointers(Board);
+void freePointers(Board);
 int errorInBoard(Board);
-int sizeCheck(Board inputBoard, Board goalBoard);
+int equalSizesCheck(Board inputBoard, Board goalBoard);
