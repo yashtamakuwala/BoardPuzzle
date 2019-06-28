@@ -24,6 +24,7 @@ int main()
 {
     Board input_Board = createBoard();
     int validity = errorInBoard(input_Board);  //to check for errors while input-parsing
+    
 
     if (validity < 0) {
         validateAndFree(validity, input_Board, INPUT_BOARD);

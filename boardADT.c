@@ -219,7 +219,7 @@ Board createBoard() {
             }
 
             if(c == 'b' ){
-                if (!b_found) {
+                if (!b_found && num == 0) {
                     no_of_elements += 1;
                     
                     if (no_of_elements == size * size){
@@ -233,7 +233,7 @@ Board createBoard() {
                     b_found = TRUE;
                     continue;
                 } else {    //Have found duplicate 'b'
-                    board->error = ERR_DUPLICATE_TILE;
+                    board->error = ERR_INVALID_TILE;
                     break;
                 }
             }
@@ -252,7 +252,9 @@ Board createBoard() {
     }
     //Return empty board if 'b' is absent from input
     if(!b_found){
-        board->error = ERR_MISSING_TILES;
+        if(board->error == 0) { //Check if board doesn't have an error in it already.
+            board->error = ERR_MISSING_TILES;
+        }
         return board;
     }
 

@@ -1,6 +1,6 @@
-puzzle : puzzle.c boardADT.h boardADT.c
+all : puzzle.c boardADT.h boardADT.c
 	dcc -o puzzle puzzle.c boardADT.c
 
-all : puzzle
+# all : puzzle
 cc : puzzle.c boardADT.h boardADT.c
 	cc -o puzzle puzzle.c boardADT.c
