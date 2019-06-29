@@ -54,6 +54,7 @@ void displayBoard(Board board) {
             printf("%d ", *(board->p + i));
         }
     }
+    printf("\n");
 }
 
 /**
@@ -72,7 +73,6 @@ int validSize(Board board) {
 
     if (isize == size) {
         board->size = isize;
-        printf("\nsize: %d", board->size);
         return TRUE;
     } else {
         return FALSE;
@@ -109,7 +109,6 @@ int disorderOfBlank(int blankNumber, int boardSize) {
 int disorderOfBoard(Board board) {
     int disorder = 0;
     int isBoardOdd = board->size % 2;
-    // printf("\n Board odd? :%d", isBoardOdd);
 
     for (int noOfElements = 1; noOfElements <= board->noOfElements; noOfElements++) {
             if (!isBoardOdd && *(board->p+noOfElements) == BLANK) {
@@ -195,7 +194,8 @@ int allTilesWithinRange(Board board) {
     int noOfElements = board->noOfElements;
 
     for (int i = 1; i <= noOfElements; i++) {
-        if (*(board->p + i) < 0 || *(board->p + i) >= rangeMax) {
+        if (*(board->p + i) < 0 || *(board->p + i) > rangeMax) {
+            
             return FALSE;
         }
     }
@@ -300,8 +300,6 @@ Board createBoard(void) {
                     }
 
                     *(numberStream + noOfElements) = BLANK;
-                    // printf("\nNumber_Stream %d", *(numberStream+noOfElements));
-                    // printf("\nNo_of_elements: %d", noOfElements);
                     bFound = TRUE;
                     continue;
                 } else {    //Have found duplicate 'b'
@@ -310,7 +308,8 @@ Board createBoard(void) {
                 }
             }
 
-            if (!isdigit(c) || c == '0') {
+            //Give error here when character is not digit or just ' 0 ' appears
+            if (!isdigit(c) || ( num == 0 && c == '0')) {
                 board->error = ERR_INVALID_TILE;
                 break;
             }
@@ -347,8 +346,10 @@ Board createBoard(void) {
  */
 int solvable(Board inputBoard, Board goalBoard) {
 
-    int inputParity = getParity(disorderOfBoard(inputBoard));
-    int goalParity = getParity(disorderOfBoard(goalBoard));
+    int inputDisroder = disorderOfBoard(inputBoard);
+    int goalDisorder = disorderOfBoard(goalBoard);
+    int inputParity = getParity(inputDisroder);
+    int goalParity = getParity(goalDisorder);
     
     return inputParity == goalParity;
 }

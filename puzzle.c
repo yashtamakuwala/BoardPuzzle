@@ -47,7 +47,6 @@ int main()
     Board goalBoard = createBoard();
     validity = errorInBoard(goalBoard);
 
-    
     if (validity < 0) {
         validateAndFree(validity, goalBoard, GOAL_BOARD);
     }
@@ -60,7 +59,6 @@ int main()
 
     printf("\ngoal: ");
     displayBoard(goalBoard);
-    validity = isBoardValid(goalBoard);
 
     if (!equalSizesCheck(inputBoard, goalBoard)) {
         printf("\nInvalid boards as their sizes don't match.");
@@ -103,28 +101,28 @@ void validateAndFree(int validity, Board board, int boardType){
  */
 void printValidationMsg(int code) {
     switch (code) {
-        case -1:
+        case ERR_INVALID_SIZE:
             printf("invalid Board Size\n");
             break;
         
-        case -2:
-            printf("duplicate Tiles present. Invalid Board.\n");
+        case ERR_DUPLICATE_TILE:
+            printf("duplicate tiles present. Invalid Board.\n");
             break;
 
-        case -3:
-            printf("one or more Tiles missing. Invalid Board\n");
+        case ERR_MISSING_TILES:
+            printf("one or more tiles missing. Invalid Board.\n");
             break;
 
-        case -4:
-            printf("one or more Tile(s) invalid. Invalid Board\n");
+        case ERR_INVALID_TILE:
+            printf("one or more tile(s) invalid. Invalid Board.\n");
             break;       
 
-        case -5:
-            fprintf(stderr,"not been allocated memory\n");
+        case ERR_INSUFFICIENT_MEMORY:
+            fprintf(stderr,"not been allocated memory.\n");
             break;
 
         default:
-            printf("invalid. Please check input\n");
+            printf("invalid. Please check input.\n");
             break;
     }
 }
